@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>How to optimize CPU usage</title>
+</head>
+<body>
+
+  <button id="playButton">Play Note</button> <br><br>
+  <button id="stopButton">Stop Note</button> <br><br>
+  <button id="increaseButton">Increase Pitch</button> <br><br>
+  <button id="decreaseButton">Decrease Pitch</button> <br><br>
+  <button id="increaseGainButton">Increase Gain</button> <br><br>
+  <button id="decreaseGainButton">Decrease Gain</button> <br><br>
+  <div id="display"></div>
+
+  <script>
+    let context = new AudioContext();
+    var pitch = 400;
+    var gainMultiplier = 1;
+    var gain = context.createGain();
+    gain.gain.value = gainMultiplier;
+    gain.connect(context.destination);
+
+    class Synth {
+        constructor () {
+          
+        }
+
+        play(freq) {
+            this.osc = context.createOscillator();
+            this.osc.connect(gain);
+            this.osc.frequency.value = freq;
+            this.osc.start(0);
+        }
+
+        stop() {
+            this.osc.stop(0);
+        }
+    }
+
+    let synth = new Synth();
+
+    const playButton = document.getElementById('playButton')
+    .addEventListener('click', () => {synth.play(pitch)});
+
+    const stopButton = document.getElementById('stopButton')
+    .addEventListener('click', () => {synth.stop()}); 
+
+    const increaseButton = document.getElementById('increaseButton')
+    .addEventListener('click', () => {increasePitch()}); 
+
+    const increaseGainButton = document.getElementById('increaseGainButton')
+    .addEventListener('click', () => {increaseGain()}); 
+
+    const decreaseButton = document.getElementById('decreaseButton')
+    .addEventListener('click', () => {decreasePitch()}); 
+
+    const decreaseGainButton = document.getElementById('decreaseGainButton')
+    .addEventListener('click', () => {decreaseGain()}); 
+
+
+    function increasePitch() {
+        synth.stop();
+        pitch += 100;
+        document.getElementById("display").innerHTML = pitch;
+        synth.play(pitch);
+    }
+
+    function decreasePitch() {
+        synth.stop();
+        pitch -= 100;
+        document.getElementById("display").innerHTML = pitch;
+        synth.play(pitch);
+    }
+
+    function increaseGain() {
+        gainMultiplier *= 2;
+        gain.gain.value = gainMultiplier;
+    }
+
+    function decreaseGain() {
+        gainMultiplier /= 2;
+        gain.gain.value = gainMultiplier;
+    }
+  </script>
+</body>
+</html>
